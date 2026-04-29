@@ -4,69 +4,69 @@ from langchain_groq import ChatGroq
 
 load_dotenv()
 
+# --- PAGE CONFIG ---
 st.set_page_config(
     page_title="AI Chatbot",
     page_icon="💬",
     layout="centered",
 )
 
-# --- CSS MINIMAL VIOLA ---
+# --- DARK THEME CSS ---
 st.markdown("""
 <style>
 
-/* Background viola uniforme */
+/* Background scuro */
 .stApp {
-    background-color: #6d28d9;
-    color: #111111;
+    background-color: #0f0f0f;
+    color: #e5e5e5;
 }
 
 /* Titolo */
 .main-title {
     text-align: center;
-    font-size: 2.3rem;
+    font-size: 2.4rem;
     font-weight: 700;
-    color: #111111;
+    color: #ffffff;
     margin-bottom: 0;
 }
 
 /* Sottotitolo */
 .subtitle {
     text-align: center;
-    color: #111111;
-    opacity: 0.8;
+    color: #bbbbbb;
     margin-bottom: 2rem;
 }
 
 /* Chat messages */
 [data-testid="stChatMessage"] {
-    background-color: rgba(255, 255, 255, 0.85);
-    color: #111111;
-    padding: 12px 16px;
+    background-color: #1c1c1c;
+    color: #e5e5e5;
+    padding: 14px 18px;
     border-radius: 14px;
     margin-bottom: 10px;
-    border: none;
+    border: 1px solid #2a2a2a;
 }
 
 /* Input box */
 textarea {
-    background-color: rgba(255, 255, 255, 0.9) !important;
-    color: #111111 !important;
-    border: none !important;
+    background-color: #1c1c1c !important;
+    color: #ffffff !important;
+    border: 1px solid #333333 !important;
     border-radius: 12px !important;
 }
 
 /* Focus input */
 textarea:focus {
     outline: none !important;
-    box-shadow: 0 0 0 2px #4c1d95 !important;
+    box-shadow: 0 0 0 2px #6d28d9 !important;
 }
 
-/* Hide sidebar completely */
+/* Hide sidebar */
 [data-testid="stSidebar"] {
     display: none;
 }
 
-/* Remove top padding clutter */
+/* Reduce top padding */
 .block-container {
     padding-top: 2rem;
 }
@@ -76,13 +76,13 @@ textarea:focus {
 
 # --- HEADER ---
 st.markdown("<p class='main-title'>💬 AI Chatbot</p>", unsafe_allow_html=True)
-st.markdown("<p class='subtitle'>Simple purple clean UI</p>", unsafe_allow_html=True)
+st.markdown("<p class='subtitle'>Dark mode minimal UI</p>", unsafe_allow_html=True)
 
 # --- STATE ---
 if "chat_history" not in st.session_state:
     st.session_state.chat_history = []
 
-# --- SHOW CHAT ---
+# --- SHOW CHAT HISTORY ---
 for message in st.session_state.chat_history:
     with st.chat_message(message["role"]):
         st.markdown(message["content"])
@@ -93,7 +93,7 @@ llm = ChatGroq(
     temperature=0.3,
 )
 
-# --- INPUT ---
+# --- USER INPUT ---
 user_prompt = st.chat_input("Scrivi un messaggio...")
 
 if user_prompt:
@@ -103,7 +103,7 @@ if user_prompt:
     )
 
     with st.chat_message("assistant"):
-        with st.spinner("..."):
+        with st.spinner("Sto pensando..."):
             response = llm.invoke(
                 [{"role": "system", "content": "You are a helpful assistant"}, *st.session_state.chat_history]
             )
