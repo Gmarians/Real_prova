@@ -6,113 +6,88 @@ load_dotenv()
 
 st.set_page_config(
     page_title="AI Chatbot",
-    page_icon="🤖",
+    page_icon="💬",
     layout="centered",
 )
 
-# --- DARK THEME CSS SERIO ---
+# --- CSS MINIMAL VIOLA ---
 st.markdown("""
 <style>
 
-/* Background principale */
+/* Background viola uniforme */
 .stApp {
-    background-color: #0f1117;
-    color: #e5e7eb;
+    background-color: #6d28d9;
+    color: #111111;
 }
 
 /* Titolo */
 .main-title {
     text-align: center;
-    font-size: 2.2rem;
-    font-weight: 600;
-    color: #ffffff;
+    font-size: 2.3rem;
+    font-weight: 700;
+    color: #111111;
     margin-bottom: 0;
 }
 
+/* Sottotitolo */
 .subtitle {
     text-align: center;
-    color: #9ca3af;
+    color: #111111;
+    opacity: 0.8;
     margin-bottom: 2rem;
 }
 
-/* Chat container base */
+/* Chat messages */
 [data-testid="stChatMessage"] {
+    background-color: rgba(255, 255, 255, 0.85);
+    color: #111111;
     padding: 12px 16px;
-    border-radius: 12px;
+    border-radius: 14px;
     margin-bottom: 10px;
-}
-
-/* USER message */
-[data-testid="stChatMessage"]:has(div[data-testid="stMarkdownContainer"]) {
-    background-color: #1f2937;
-}
-
-/* Assistant message */
-[data-testid="stChatMessage"] {
-    background-color: #111827;
-    border: 1px solid #1f2937;
+    border: none;
 }
 
 /* Input box */
 textarea {
-    background-color: #111827 !important;
-    color: #e5e7eb !important;
-    border: 1px solid #374151 !important;
-    border-radius: 10px !important;
+    background-color: rgba(255, 255, 255, 0.9) !important;
+    color: #111111 !important;
+    border: none !important;
+    border-radius: 12px !important;
 }
 
-/* Input focus */
+/* Focus input */
 textarea:focus {
-    border-color: #3b82f6 !important;
-    box-shadow: none !important;
+    outline: none !important;
+    box-shadow: 0 0 0 2px #4c1d95 !important;
 }
 
-/* Sidebar */
-section[data-testid="stSidebar"] {
-    background-color: #0b0d12;
-    border-right: 1px solid #1f2937;
+/* Hide sidebar completely */
+[data-testid="stSidebar"] {
+    display: none;
 }
 
-/* Button */
-.stButton button {
-    background-color: #1f2937;
-    color: white;
-    border: 1px solid #374151;
-    border-radius: 8px;
-}
-
-.stButton button:hover {
-    background-color: #374151;
+/* Remove top padding clutter */
+.block-container {
+    padding-top: 2rem;
 }
 
 </style>
 """, unsafe_allow_html=True)
 
-# --- SIDEBAR ---
-with st.sidebar:
-    st.markdown("### ⚙️ Settings")
-
-    if st.button("🧹 Clear Chat"):
-        st.session_state.chat_history = []
-        st.rerun()
-
-    st.markdown("---")
-    st.markdown("**Model**")
-    st.caption("llama-3.1-8b-instant")
-
 # --- HEADER ---
 st.markdown("<p class='main-title'>💬 AI Chatbot</p>", unsafe_allow_html=True)
-st.markdown("<p class='subtitle'>Dark, minimal, professional UI</p>", unsafe_allow_html=True)
+st.markdown("<p class='subtitle'>Simple purple clean UI</p>", unsafe_allow_html=True)
 
-# --- HISTORY ---
+# --- STATE ---
 if "chat_history" not in st.session_state:
     st.session_state.chat_history = []
 
+# --- SHOW CHAT ---
 for message in st.session_state.chat_history:
     with st.chat_message(message["role"]):
         st.markdown(message["content"])
 
-# --- LLM ---
+# --- MODEL ---
 llm = ChatGroq(
     model="llama-3.1-8b-instant",
     temperature=0.3,
@@ -128,7 +103,7 @@ if user_prompt:
     )
 
     with st.chat_message("assistant"):
-        with st.spinner("Thinking..."):
+        with st.spinner("..."):
             response = llm.invoke(
                 [{"role": "system", "content": "You are a helpful assistant"}, *st.session_state.chat_history]
             )
