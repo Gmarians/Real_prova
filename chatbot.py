@@ -1,130 +1,115 @@
+from dotenv import load_dotenv
 import streamlit as st
 from langchain_groq import ChatGroq
-from dotenv import load_dotenv
-import os
 
-# Carica variabili d'ambiente
 load_dotenv()
 
-# Configurazione Pagina
 st.set_page_config(
-    page_title="Lumina AI",
-    page_icon="✨",
+    page_title="AI Chatbot",
+    page_icon="💬",
     layout="centered",
 )
 
-# --- CSS AVANZATO (Design Moderno) ---
+# --- CSS MINIMAL VIOLA ---
 st.markdown("""
 <style>
-    /* Importazione Font */
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
 
-    html, body, [data-testid="stAppViewContainer"] {
-        font-family: 'Inter', sans-serif;
-        background: linear-gradient(135deg, #1e1b4b 0%, #4c1d95 100%);
-    }
+/* Background viola uniforme */
+.stApp {
+    background-color: #6d28d9;
+    color: #111111;
+}
 
-    /* Header */
-    .header-container {
-        text-align: center;
-        padding: 2rem 0;
-    }
-    
-    .main-title {
-        background: linear-gradient(90deg, #c084fc, #e879f9);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        font-size: 3rem;
-        font-weight: 800;
-        margin-bottom: 0.5rem;
-    }
+/* Titolo */
+.main-title {
+    text-align: center;
+    font-size: 2.3rem;
+    font-weight: 700;
+    color: #111111;
+    margin-bottom: 0;
+}
 
-    /* Container messaggi */
-    [data-testid="stChatMessage"] {
-        border-radius: 20px;
-        padding: 1.5rem;
-        margin-bottom: 1rem;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-    }
+/* Sottotitolo */
+.subtitle {
+    text-align: center;
+    color: #111111;
+    opacity: 0.8;
+    margin-bottom: 2rem;
+}
 
-    /* Stile specifico Assistant */
-    [data-testid="stChatMessageAssistant"] {
-        background-color: rgba(255, 255, 255, 0.05) !important;
-        backdrop-filter: blur(10px);
-    }
+/* Chat messages */
+[data-testid="stChatMessage"] {
+    background-color: rgba(255, 255, 255, 0.85);
+    color: #111111;
+    padding: 12px 16px;
+    border-radius: 14px;
+    margin-bottom: 10px;
+    border: none;
+}
 
-    /* Stile specifico User */
-    [data-testid="stChatMessageUser"] {
-        background-color: rgba(147, 51, 234, 0.2) !important;
-        border: 1px solid rgba(147, 51, 234, 0.3);
-    }
+/* Input box */
+textarea {
+    background-color: rgba(255, 255, 255, 0.9) !important;
+    color: #111111 !important;
+    border: none !important;
+    border-radius: 12px !important;
+}
 
-    /* Input Bar */
-    [data-testid="stChatInput"] {
-        border-radius: 15px;
-        border: 1px solid rgba(255, 255, 255, 0.2);
-    }
+/* Focus input */
+textarea:focus {
+    outline: none !important;
+    box-shadow: 0 0 0 2px #4c1d95 !important;
+}
 
-    /* Nascondi Sidebar e menu inutili */
-    [data-testid="stSidebar"], #MainMenu, footer {
-        display: none;
-    }
+/* Hide sidebar completely */
+[data-testid="stSidebar"] {
+    display: none;
+}
 
-    .stDeployButton {display:none;}
+/* Remove top padding clutter */
+.block-container {
+    padding-top: 2rem;
+}
+
 </style>
 """, unsafe_allow_html=True)
 
 # --- HEADER ---
-st.markdown("""
-    <div class="header-container">
-        <h1 class="main-title">Lumina AI</h1>
-        <p style="color: #d8b4fe; font-size: 1.1rem; opacity: 0.9;">
-            L'assistente intelligente dal design minimale.
-        </p>
-    </div>
-""", unsafe_allow_html=True)
+st.markdown("<p class='main-title'>💬 AI Chatbot</p>", unsafe_allow_html=True)
+st.markdown("<p class='subtitle'>Simple purple clean UI</p>", unsafe_allow_html=True)
 
-# --- INIZIALIZZAZIONE STATO ---
-if "messages" not in st.session_state:
-    st.session_state.messages = []
+# --- STATE ---
+if "chat_history" not in st.session_state:
+    st.session_state.chat_history = []
 
-# --- VISUALIZZAZIONE STORICO ---
-# Creiamo un container per non far saltare la pagina durante il caricamento
-chat_container = st.container()
+# --- SHOW CHAT ---
+for message in st.session_state.chat_history:
+    with st.chat_message(message["role"]):
+        st.markdown(message["content"])
 
-with chat_container:
-    for message in st.session_state.messages:
-        with st.chat_message(message["role"]):
-            st.markdown(message["content"])
+# --- MODEL ---
+llm = ChatGroq(
+    model="llama-3.1-8b-instant",
+    temperature=0.3,
+)
 
-# --- LOGICA MODELLO ---
-def get_ai_response(history):
-    try:
-        llm = ChatGroq(
-            model="llama-3.1-8b-instant",
-            temperature=0.6, # Un po' più di creatività
-            api_key=os.getenv("GROQ_API_KEY")
-        )
-        # Formattazione per LangChain Groq
-        system_msg = ("role", "system", "Sei Lumina, un assistente AI cordiale ed elegante. Rispondi in modo conciso ma utile.")
-        messages = [system_msg] + [(m["role"], m["content"]) for m in history]
-        
-        response = llm.invoke(messages)
-        return response.content
-    except Exception as e:
-        return f"Ops! Qualcosa è andato storto: {str(e)}"
+# --- INPUT ---
+user_prompt = st.chat_input("Scrivi un messaggio...")
 
-# --- INPUT UTENTE ---
-if prompt := st.chat_input("Chiedimi qualsiasi cosa..."):
-    # Aggiungi messaggio utente
-    st.session_state.messages.append({"role": "user", "content": prompt})
-    with st.chat_message("user"):
-        st.markdown(prompt)
+if user_prompt:
+    st.chat_message("user").markdown(user_prompt)
+    st.session_state.chat_history.append(
+        {"role": "user", "content": user_prompt}
+    )
 
-    # Genera risposta assistente
     with st.chat_message("assistant"):
-        with st.spinner("Lumina sta pensando..."):
-            full_response = get_ai_response(st.session_state.messages)
-            st.markdown(full_response)
-    
-    st.session_state.messages.append({"role": "assistant", "content": full_response})
+        with st.spinner("..."):
+            response = llm.invoke(
+                [{"role": "system", "content": "You are a helpful assistant"}, *st.session_state.chat_history]
+            )
+            assistant_response = response.content
+            st.markdown(assistant_response)
+
+    st.session_state.chat_history.append(
+        {"role": "assistant", "content": assistant_response}
+    )
