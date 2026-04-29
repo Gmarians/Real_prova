@@ -21,6 +21,14 @@ st.markdown("""
     color: #e5e5e5;
 }
 
+/* Centrare tutto il contenuto */
+.block-container {
+    max-width: 700px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    padding-top: 2rem !important;
+}
+
 /* Titolo */
 .main-title {
     text-align: center;
@@ -64,11 +72,6 @@ textarea:focus {
 /* Hide sidebar */
 [data-testid="stSidebar"] {
     display: none;
-}
-
-/* Reduce top padding */
-.block-container {
-    padding-top: 2rem;
 }
 
 </style>
