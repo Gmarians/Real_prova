@@ -10,61 +10,79 @@ st.set_page_config(
     layout="centered",
 )
 
-# --- CSS PULITO ---
+# --- DARK THEME CSS SERIO ---
 st.markdown("""
 <style>
 
-/* Background neutro */
+/* Background principale */
 .stApp {
-    background-color: #f7f7f8;
+    background-color: #0f1117;
+    color: #e5e7eb;
 }
 
-/* Header */
+/* Titolo */
 .main-title {
     text-align: center;
     font-size: 2.2rem;
     font-weight: 600;
+    color: #ffffff;
     margin-bottom: 0;
 }
 
 .subtitle {
     text-align: center;
-    color: #6b7280;
-    margin-top: 0;
+    color: #9ca3af;
     margin-bottom: 2rem;
 }
 
-/* Chat bubbles */
+/* Chat container base */
 [data-testid="stChatMessage"] {
     padding: 12px 16px;
     border-radius: 12px;
     margin-bottom: 10px;
-    max-width: 85%;
 }
 
-/* User */
-[data-testid="stChatMessage"][data-testid*="user"] {
-    background-color: #2563eb;
-    color: white;
-    margin-left: auto;
+/* USER message */
+[data-testid="stChatMessage"]:has(div[data-testid="stMarkdownContainer"]) {
+    background-color: #1f2937;
 }
 
-/* Assistant */
-[data-testid="stChatMessage"][data-testid*="assistant"] {
-    background-color: #ffffff;
-    border: 1px solid #e5e7eb;
+/* Assistant message */
+[data-testid="stChatMessage"] {
+    background-color: #111827;
+    border: 1px solid #1f2937;
 }
 
-/* Input */
+/* Input box */
 textarea {
+    background-color: #111827 !important;
+    color: #e5e7eb !important;
+    border: 1px solid #374151 !important;
     border-radius: 10px !important;
-    border: 1px solid #d1d5db !important;
+}
+
+/* Input focus */
+textarea:focus {
+    border-color: #3b82f6 !important;
+    box-shadow: none !important;
 }
 
 /* Sidebar */
 section[data-testid="stSidebar"] {
-    background-color: #ffffff;
-    border-right: 1px solid #e5e7eb;
+    background-color: #0b0d12;
+    border-right: 1px solid #1f2937;
+}
+
+/* Button */
+.stButton button {
+    background-color: #1f2937;
+    color: white;
+    border: 1px solid #374151;
+    border-radius: 8px;
+}
+
+.stButton button:hover {
+    background-color: #374151;
 }
 
 </style>
@@ -84,9 +102,9 @@ with st.sidebar:
 
 # --- HEADER ---
 st.markdown("<p class='main-title'>💬 AI Chatbot</p>", unsafe_allow_html=True)
-st.markdown("<p class='subtitle'>Ask anything</p>", unsafe_allow_html=True)
+st.markdown("<p class='subtitle'>Dark, minimal, professional UI</p>", unsafe_allow_html=True)
 
-# --- CHAT HISTORY ---
+# --- HISTORY ---
 if "chat_history" not in st.session_state:
     st.session_state.chat_history = []
 
